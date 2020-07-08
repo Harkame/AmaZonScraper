@@ -2,20 +2,13 @@ import requests
 from bs4 import BeautifulSoup
 import logging
 import os
-from firebase_admin import messaging
-import firebase_admin
-from firebase_admin import credentials
-import smtplib, ssl
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
 import time
-from win10toast import ToastNotifier
-import webbrowser
 
 DEFAULT_CONFIG_FILE = os.path.join(".", "config.yml")
 AMAZON_TLD = "fr"
 
 AMAZON_BASE_PRODUCT_URL = f"https://www.amazon.{AMAZON_TLD}/dp/"
+AMAZON_BASE_SEARCH_URL = f"https://www.amazon.fr/s?k="
 logger = logging.getLogger(__name__)
 
 DEFAULT_PORT = 587
@@ -61,11 +54,12 @@ class AmazonScraper:
 
         if product_title_tag is None:
             logger.debug("spam detected")
-            time.sleep(15)  # spam detected
+            #time.sleep(15)  # spam detected
             return
 
         image = page.find("img", {"id": "landingImage"})["src"]
 
+        product.image = image.strip()
         product.title = product_title_tag.text.strip()
 
         price_tag = page.find(id="priceblock_ourprice")
@@ -91,6 +85,37 @@ class AmazonScraper:
 
         return product
 
+    def search(self, search, limit=5):
+        url = f"{AMAZON_BASE_SEARCH_URL}{search}"
+
+        logger.debug("url : %s", url)
+
+        page = BeautifulSoup(self.session.get(url, headers=headers).content, "lxml")
+
+        list = page.find("div", {"class" : "s-main-slot"})
+
+        items = list.find_all("div", recursive=False)[1:]
+
+        count = 0
+        products = []
+
+        for item in items:
+            if count == limit:
+                return products
+
+            code = item["data-asin"]
+
+            print(code)
+
+            if len(code) > 0:
+                product = self.get_product(code)
+                products.append(product)
+
+            count = count + 1
+
+        return products
+
+
 
 class Product:
     def __init__(self):
@@ -98,19 +123,27 @@ class Product:
         self.code = None
         self.url = None
         self.price = 0.0
+        self.image = None
 
     def __str__(self):
         to_string = ""
-        to_string += "Title :"
+        to_string += "Title : "
         to_string += self.title
         to_string += os.linesep
-        to_string += "Price :"
+        to_string += "Price : "
         to_string += str(self.price)
+        to_string += os.linesep
+        to_string += "Image : "
+        to_string += self.image
         to_string += os.linesep
         return to_string
 
 
 if __name__ == "__main__":
     scraper = AmazonScraper()
-    product = scraper.get_product("B07YFW75X9")
-    print(str(product))
+    #product = scraper.get_product("B07YFW75X9")
+    #print(str(product))
+    products = scraper.search("walking dead")
+
+    for product in products:
+        print(str(product))
