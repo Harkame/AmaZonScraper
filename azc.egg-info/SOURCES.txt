@@ -1,7 +1,0 @@
-README.md
-setup.py
-azc.egg-info/PKG-INFO
-azc.egg-info/SOURCES.txt
-azc.egg-info/dependency_links.txt
-azc.egg-info/requires.txt
-azc.egg-info/top_level.txt

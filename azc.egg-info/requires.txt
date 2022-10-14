@@ -1,3 +1,0 @@
-BeautifulSoup4>=4.8.1
-lxml>=4.4.1
-selenium==4.3.0
