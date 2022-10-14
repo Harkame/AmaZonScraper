@@ -1,10 +1,22 @@
+Metadata-Version: 2.1
+Name: azc
+Version: 1.0.0
+Summary: Scraper for Amazon
+Home-page: https://github.com/Harkame/AmazonScraper
+Author: Harkame
+Classifier: Programming Language :: Python
+Classifier: License :: OSI Approved
+Classifier: Operating System :: OS Independent
+Requires-Python: >=3.6
+Description-Content-Type: text/markdown
+
 # AmazonScraper
 
 ## Installation
 
 ``` bash
 
-pip install azs
+pip install azc
 
 ```
 
@@ -71,8 +83,8 @@ print(str(product))
 
 """
 
-Title : Western Digital WD Red Plus 3.5" 4000 Go Série ATA III
-Price : 119.13 €
+Title : Western Digital WD Red Plus 3.5" 4000 Go SÃ©rie ATA III
+Price : 119.13 â‚¬
 Evaluation : 4.6
 Evaluation count : 1
 Saving percentage : 10

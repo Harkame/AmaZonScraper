@@ -1,10 +1,12 @@
-import requests
 from bs4 import BeautifulSoup
 import logging
 import os
 import time
 from fake_useragent import UserAgent
 import re
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 DEFAULT_CONFIG_FILE = os.path.join(".", "config.yml")
 AMAZON_TLD = "fr"
@@ -17,21 +19,33 @@ DEFAULT_CREDENTIAL = "credential.json"
 
 class AmazonScraper:
     def __init__(self, session=None, driver=None):
-        if session is None:
-            self.session = requests.session()
-        else:
-            self.session = session
-
+        self.session = session
         self.driver = driver
 
+    def get_page(self, url):
+        page = None
+
+        if self.session is not None:
+            '''
+            headers = {
+                "User-Agent": UserAgent().random
+            }
+            '''
+            page = self.session.get(url).content
+
+        if self.driver is not None:
+            self.driver.get(url)
+            WebDriverWait(self.driver, 30000).until(
+                EC.presence_of_element_located((By.CSS_SELECTOR, "#titleSection"))
+            )
+
+            page = self.driver.page_source
+
+        return page
+
+
     def __get_product_page__(self, product_url):
-        url = f"{product_url}"
-
-        headers = {
-            "User-Agent": UserAgent().random
-        }
-
-        page = BeautifulSoup(self.session.get(url, headers=headers).content, "lxml")
+        page = BeautifulSoup(self.get_page(product_url), "lxml")
 
         return page
 
@@ -42,7 +56,7 @@ class AmazonScraper:
         product = Product()
         product.url = product_url
 
-        product_title_tag = product_url.find(id="titleSection")
+        product_title_tag = page.find(id="titleSection")
 
         if product_title_tag is None:
             logger.debug("spam detected")
@@ -50,13 +64,13 @@ class AmazonScraper:
             return
 
         tmp_evaluation = page.find('span', {'id': 'acrPopover'}).text
-        product.evaluation = float(re.findall(r'\d+,\d+', tmp_evaluation)[0].replace(',', '.'))
 
-        tmp_evaluationss_count = page.find('span', {'id': 'acrCustomerReviewText'}).text
-        product.evaluations_count = int(re.findall(r'\d+', tmp_evaluationss_count)[0])
+        product.evaluation = float(re.findall("\d+[\.|,]\d+", tmp_evaluation)[0].replace(',', '.'))
 
-        tmp_saving_percentage = page.find('span', {'class' : 'savingsPercentage'}).text
-        product.saving_percentage = int(re.findall(r'\d+', tmp_saving_percentage)[0])
+        saving_percentage_tag = page.find('span', {'class' : 'savingsPercentage'})
+
+        if saving_percentage_tag is not None:
+            product.saving_percentage = int(re.findall(r'\d+', saving_percentage_tag.text)[0])
 
 
         price_block = page.find('span', {'class' : 'priceToPay'})
@@ -104,9 +118,3 @@ class Product:
         to_string += os.linesep
 
         return to_string
-
-
-if __name__ == "__main__":
-    scraper = AmazonScraper()
-    product = scraper.get_product('https://www.amazon.fr/gp/product/B08VH8C3WZ')
-    print(str(product))

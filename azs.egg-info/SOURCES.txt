@@ -1,0 +1,7 @@
+README.md
+setup.py
+azs.egg-info/PKG-INFO
+azs.egg-info/SOURCES.txt
+azs.egg-info/dependency_links.txt
+azs.egg-info/requires.txt
+azs.egg-info/top_level.txt
