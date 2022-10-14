@@ -108,4 +108,3 @@ class Product:
         to_string += os.linesep
 
         return to_string
-    

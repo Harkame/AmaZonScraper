@@ -25,7 +25,7 @@ python setup.py install
 ### Initialization with requests
 
 ``` python
-from azc import AmazonScraper
+from azs import AmazonScraper
 from requests import Session
 
 session = Session()
@@ -38,7 +38,7 @@ scraper = AmazonScraper(session=session())
 
 ``` python
 
-from azc import AmazonScraper
+from azs import AmazonScraper
 from selenium.webdriver.chrome.options import Options
 import undetected_chromedriver.v2 as uc
 
@@ -56,7 +56,7 @@ scraper = AmazonScraper(driver=driver)
 
 ``` python
 
-from azc import AmazonScraper
+from azs import AmazonScraper
 
 scraper = AmazonScraper()
 
