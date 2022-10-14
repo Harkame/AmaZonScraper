@@ -56,9 +56,7 @@ scraper = AmazonScraper(driver=driver)
 
 ``` python
 
-from azs import AmazonScraper
-
-scraper = AmazonScraper()
+#TODO
 
 ```
 
