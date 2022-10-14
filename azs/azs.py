@@ -1,5 +1,4 @@
 from bs4 import BeautifulSoup
-import logging
 import os
 import time
 from fake_useragent import UserAgent
@@ -7,15 +6,6 @@ import re
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-
-DEFAULT_CONFIG_FILE = os.path.join(".", "config.yml")
-AMAZON_TLD = "fr"
-
-AMAZON_BASE_PRODUCT_URL = f"https://www.amazon.{AMAZON_TLD}/dp/"
-logger = logging.getLogger(__name__)
-
-DEFAULT_CREDENTIAL = "credential.json"
-
 
 class AmazonScraper:
     def __init__(self, session=None, driver=None):
@@ -118,3 +108,4 @@ class Product:
         to_string += os.linesep
 
         return to_string
+    
