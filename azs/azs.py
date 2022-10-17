@@ -1,30 +1,25 @@
 from bs4 import BeautifulSoup
 import os
-import time
 from fake_useragent import UserAgent
 import re
+import requests
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 
 class AmazonScraper:
-    def __init__(self, session=None, driver=None):
-        self.session = session
+    def __init__(self, driver=None):
         self.driver = driver
 
     def get_page(self, url):
         page = None
 
-        if self.session is not None:
-            '''
-            headers = {
-                "User-Agent": UserAgent().random
-            }
-            '''
-            page = self.session.get(url).content
-
-        if self.driver is not None:
+        if self.driver is None:
+            ua = UserAgent()
+            headers = {'User-Agent': ua.random}
+            page = requests.get(url, headers=headers).content
+        else:
             self.driver.get(url)
             WebDriverWait(self.driver, 30000).until(
                 EC.presence_of_element_located((By.CSS_SELECTOR, "#titleSection"))
@@ -33,7 +28,6 @@ class AmazonScraper:
             page = self.driver.page_source
 
         return page
-
 
     def __get_product_page__(self, product_url):
         page = BeautifulSoup(self.get_page(product_url), "lxml")
@@ -50,9 +44,7 @@ class AmazonScraper:
         product_title_tag = page.find(id="titleSection")
 
         if product_title_tag is None:
-            logger.debug("spam detected")
-            time.sleep(15)  # spam detected
-            return
+            return None
 
         tmp_evaluation = page.find('span', {'id': 'acrPopover'}).text
 
@@ -62,7 +54,6 @@ class AmazonScraper:
 
         if saving_percentage_tag is not None:
             product.saving_percentage = int(re.findall(r'\d+', saving_percentage_tag.text)[0])
-
 
         price_block = page.find('span', {'class' : 'priceToPay'})
 

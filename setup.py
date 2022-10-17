@@ -5,16 +5,17 @@ with open("README.md", "r") as fh:
 
 setup(
     name="azs",
-    version="1.0.0",
+    version="1.0.4",
     author="Harkame",
     description="Scraper for Amazon",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/Harkame/AmaZonScraper",
     install_requires=[
-        "BeautifulSoup4 >= 4.8.1",
-        "lxml >= 4.4.1",
-        "selenium==4.3.0"
+        "BeautifulSoup4",
+        "lxml",
+        "selenium",
+        "fake-useragent"
     ],
     classifiers=[
         "Programming Language :: Python",
