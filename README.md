@@ -25,12 +25,10 @@ python setup.py install
 ### Initialization with requests
 
 ``` python
+
 from azs import AmazonScraper
-from requests import Session
 
-session = Session()
-
-scraper = AmazonScraper(session=session())
+scraper = AmazonScraper()
 
 ```
 
@@ -56,7 +54,16 @@ scraper = AmazonScraper(driver=driver)
 
 ``` python
 
-#TODO
+from selenium.webdriver.chrome.options import Options
+from selenium import webdriver
+
+options = Options()
+options.add_argument('--headless')
+options.add_argument('--disable-gpu')
+
+driver =webdriver.Chrome(executable_path='D:\\chromedriver.exe', options=options)
+
+scraper = AmazonScraper(driver=driver)
 
 ```
 

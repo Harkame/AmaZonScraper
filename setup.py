@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="azs",
-    version="1.0.4",
+    version="1.0.5",
     author="Harkame",
     description="Scraper for Amazon",
     long_description=long_description,

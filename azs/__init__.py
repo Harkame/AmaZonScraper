@@ -1,1 +1,1 @@
-from .azs import AmazonScraper
+from .azs import AmazonScraper, Product
